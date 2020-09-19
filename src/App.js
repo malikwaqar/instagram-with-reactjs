@@ -1,27 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/Header/Header';
 import Post from './components/Post/Post';
+import { db } from './firebase';
 
 function App() {
-  const[posts, setPosts] = useState([
-    {
-      username: "waqaristic",
-      caption: "Let's build react apps!",
-      image: "https://hackernoon.com/images/z2xg2bpo.jpg",
-    },
-    {
-      username: "waqar",
-      caption: "My Dog!",
-      image: "https://i.insider.com/5484d9d1eab8ea3017b17e29?width=1100&format=jpeg&auto=webp",
-    }, 
-  ]);
+  const[posts, setPosts] = useState([]);
+
+  useEffect (() => {
+    db.collection('posts').onSnapshot(snapshot => {
+      setPosts(snapshot.docs.map(doc => ({
+        id: doc.id, 
+        post: doc.data()
+      })));
+    })
+  }, []);
   return (
     <div className="app">
       <Header />
       {
-        posts.map(post => (
-          <Post username={post.username} caption={post.caption} image={post.image} />
+        posts.map(({id, post}) => (
+          <Post key={id} username={post.username} caption={post.caption} image={post.image} />
         ))
       }
     </div>

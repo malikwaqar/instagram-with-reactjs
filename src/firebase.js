@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-const firebaseConfig = firebase.initializeApp(
+const firebaseApp = firebase.initializeApp(
     {
         apiKey: "AIzaSyC_juWd63cVmnAzfPFPqKm-LH2YXPRz56U",
         authDomain: "instagram-with-reactjs.firebaseapp.com",
@@ -12,10 +12,9 @@ const firebaseConfig = firebase.initializeApp(
         measurementId: "G-4Z2FSJ2D4C"
       }
 );
-  
-  
+
   const db = firebaseApp.firestore();
   const auth = firebase.auth();
   const storage = firebase.storage();
   
-  export default { db, auth, storage };
+  export { db, auth, storage };
