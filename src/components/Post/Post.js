@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Post.css';
 import Avatar from '@material-ui/core/Avatar';
 import { db } from '../../firebase';
+import firebase from 'firebase';
 
-function Post({ postId, username, caption, image}) {
+function Post({ postId, user, username, caption, image}) {
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState('');
 
@@ -14,6 +15,7 @@ function Post({ postId, username, caption, image}) {
             .collection('posts')
             .doc(postId)
             .collection('comments')
+            .orderBy('timestamp', 'desc')
             .onSnapshot((snapshot) => {
                 setComments(snapshot.docs.map((doc) => doc.data()));
             });
@@ -24,7 +26,13 @@ function Post({ postId, username, caption, image}) {
     }, [postId]);
 
     const postComment = (event) => {
-
+        event.preventDefault();
+        db.collection('posts').doc(postId).collection('comments').add({
+            text: comment,
+            username: user.displayName,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        setComment('');
     }
 
     return (
@@ -47,8 +55,8 @@ function Post({ postId, username, caption, image}) {
                     ))
                 }
             </div>
-
-            <form className="post__commentBox">
+            {user && (
+                <form className="post__commentBox">
                 <input
                 className="post__input"
                 type="text"
@@ -63,6 +71,8 @@ function Post({ postId, username, caption, image}) {
                 onClick={postComment}
                 >Post</button>
             </form>
+            )}
+            
         </div>
     )
 }
