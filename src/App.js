@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import Header from './components/Header/Header';
 import Post from './components/Post/Post';
 import { db, auth } from './firebase';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button, Input } from '@material-ui/core';
 import ImageUpload from './ImageUpload';
+import InstagramEmbed from 'react-instagram-embed';
 
 function getModalStyle() {
   const top = 50;
@@ -85,13 +85,7 @@ function App() {
 
   return (
     <div className="app">
-      {user?.displayName ? (
-        <ImageUpload username={user.displayName} />
-      ) :
-      (
-        <h3>Sorry you need to login to upload</h3>
-      )
-      }
+      
       
       <Modal
         open={open}
@@ -161,7 +155,11 @@ function App() {
 
 
 
-      {
+      
+      <div className="app__header">
+            <img className="app__headerLogo" src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram Logo" />
+            
+            {
       user ? (<Button onClick={() => auth.signOut()}>Logout</Button>)
       : 
       (
@@ -171,11 +169,38 @@ function App() {
         </div>
       ) 
       }
-      <Header />
-      {
+        </div>
+      <div className="app__posts">
+        <div className="app__postsLeft">
+        {
         posts.map(({id, post}) => (
           <Post key={id} username={post.username} caption={post.caption} image={post.image} />
         ))
+      }
+        </div>
+        <div className="app__postsRight">
+        <InstagramEmbed
+      url="https://www.instagram.com/p/CFUbR0tgCt7/?utm_source=ig_web_copy_link"
+      maxWidth={320}
+      hideCaption={false}
+      containerTagName='div'
+      protocol=''
+      injectScript
+      onLoading= {() => {}}
+      onSuccess={() => {}}
+      onAfterRender={() => {}}
+      onFailure={() => {}}
+      />
+        </div>
+      
+      </div>
+      
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) :
+      (
+        <h3>Sorry you need to login to upload</h3>
+      )
       }
     </div>
   );
